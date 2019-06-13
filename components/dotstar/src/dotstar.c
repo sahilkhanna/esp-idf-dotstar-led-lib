@@ -18,7 +18,7 @@ spi_device_interface_config_t adc_spi_dev_cfg={
 
 static uint8_t m_num_of_leds=0;
 static uint8_t m_color_mode=0;
-static uint8_t data_buf[266];
+static uint8_t* data_buf;
 
 
 spi_transaction_t t;
@@ -45,7 +45,9 @@ void init_led(uint8_t data_pin, uint8_t clock_pin, uint8_t num_of_leds, uint8_t 
     led_data_bus_cfg.sclk_io_num=clock_pin;
     m_num_of_leds=num_of_leds;
     m_color_mode=color_mode;
-    memset( data_buf , 0 , sizeof(data_buf)  );
+    free(data_buf);
+    data_buf=heap_caps_malloc(num_of_leds*3,MALLOC_CAP_8BIT);
+    memset( data_buf , 0 , num_of_leds*3  );
     esp_err_t ret;
     ret=spi_bus_initialize(HSPI_HOST, &led_data_bus_cfg, 0);
     ESP_ERROR_CHECK(ret);
